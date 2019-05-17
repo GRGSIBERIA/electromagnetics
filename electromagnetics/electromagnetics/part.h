@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include <string>
+#include "datafile.h"
 
 namespace cem
 {
 	class Part
 	{
 		std::string name;
-		std::string path;
+		DataFile file;
 
 	public:
 		Part(const char* name, const char* path);

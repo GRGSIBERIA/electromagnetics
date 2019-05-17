@@ -1,12 +1,18 @@
 ﻿#include "config.h"
+#include <stdio.h>
+#include "fileutil.h"
+#include <fcntl.h>
+
+
 
 cem::ConfigFile::ConfigFile(const char * path)
-	: path(path)
+	: file(path)
 {
-
+	InitializeConfigFile();
 }
 
 cem::ConfigFile::ConfigFile(const std::string & path)
-	: path(path)
+	: file(path)
 {
+	InitializeConfigFile();
 }
