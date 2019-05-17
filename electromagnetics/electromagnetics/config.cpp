@@ -5,6 +5,10 @@
 
 
 
+void cem::ConfigFile::InitializeConfigFile()
+{
+}
+
 cem::ConfigFile::ConfigFile(const char * path)
 	: file(path)
 {

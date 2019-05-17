@@ -7,5 +7,5 @@ namespace cem
 
 	void* SetVBuf(FILE* fp, const size_t size);
 
-	void* ReadFile(FILE* fp);
+	void* ReadFile(FILE* fp, size_t& size);
 }

@@ -13,7 +13,7 @@ void * cem::DataFile::ReadFile()
 
 	// ファイルを開いて全データを読み込む
 	fopen_s(&fp, path.c_str(), "rb");
-	void* stream = cem::ReadFile(fp);
+	void* stream = cem::ReadFile(fp, size);
 	fclose(fp);
 
 	return stream;

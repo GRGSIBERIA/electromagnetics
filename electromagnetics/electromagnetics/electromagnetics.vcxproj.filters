@@ -30,12 +30,15 @@
     <ClCompile Include="fileutil.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="datafile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="strutil.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cem.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="lineio.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
@@ -45,6 +48,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="fileutil.h">
+      <Filter>ヘッダー ファイル\util</Filter>
+    </ClInclude>
+    <ClInclude Include="datafile.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="strutil.h">
       <Filter>ヘッダー ファイル\util</Filter>
     </ClInclude>
   </ItemGroup>

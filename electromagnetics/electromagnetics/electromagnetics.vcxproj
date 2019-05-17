@@ -143,16 +143,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="datafile.cpp" />
     <ClCompile Include="fileutil.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="part.cpp" />
+    <ClCompile Include="strutil.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cem.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="datafile.h" />
     <ClInclude Include="fileutil.h" />
-    <ClInclude Include="lineio.h" />
     <ClInclude Include="part.h" />
+    <ClInclude Include="strutil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

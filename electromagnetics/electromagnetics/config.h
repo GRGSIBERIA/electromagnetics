@@ -15,8 +15,6 @@ namespace cem
 
 		void InitializeConfigFile();
 
-		void* ReadFile();
-
 	public:
 		ConfigFile(const char* path);
 		ConfigFile(const std::string& path);

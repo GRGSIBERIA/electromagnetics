@@ -31,9 +31,9 @@ void * cem::SetVBuf(FILE * fp, const size_t size)
 	return buf;
 }
 
-void * cem::ReadFile(FILE * fp)
+void * cem::ReadFile(FILE * fp, size_t& size)
 {
-	size_t size = cem::GetFileSize(fp);
+	size = cem::GetFileSize(fp);
 
 	// バッファを設定
 	void* buf = cem::SetVBuf(fp, 128 * 1024 * 1024);
