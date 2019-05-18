@@ -7,6 +7,8 @@ namespace cem
 	{
 		std::string path;
 		char* data;
+		size_t size;
+		size_t dataSize;
 
 		void InitializeDataFile();
 		void* ReadFile();

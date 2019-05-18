@@ -1,15 +1,21 @@
 ﻿#include "datafile.h"
 #include "fileutil.h"
+#include "strutil.h"
 
 void cem::DataFile::InitializeDataFile()
 {
 	char* stream = (char*)ReadFile();
+	const size_t numofLines = cem::CountReturn(stream, size) + 1;
+	const size_t lineOfMaxLength = cem::LineOfMaxLength(stream, size);
+
+	dataSize = sizeof(char) * numofLines * lineOfMaxLength;
+	data = (char*)malloc(dataSize);
+	ZeroClear(data, dataSize);
 }
 
 void * cem::DataFile::ReadFile()
 {
 	FILE* fp;
-	size_t size;
 
 	// ファイルを開いて全データを読み込む
 	fopen_s(&fp, path.c_str(), "rb");
