@@ -1,17 +1,16 @@
 ﻿#pragma once
 #include <string>
+#include <vector>
 
 namespace cem
 {
 	class DataFile
 	{
 		std::string path;
-		char* data;
-		size_t size;
-		size_t dataSize;
+		std::vector<std::string> lines;
 
 		void InitializeDataFile();
-		void* ReadFile();
+		void* ReadFile(size_t& size);
 
 	public:
 		DataFile(const std::string& path);

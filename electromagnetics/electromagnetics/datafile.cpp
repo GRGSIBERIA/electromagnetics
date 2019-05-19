@@ -4,16 +4,18 @@
 
 void cem::DataFile::InitializeDataFile()
 {
-	char* stream = (char*)ReadFile();
+	size_t size;
+	char* stream = (char*)ReadFile(size);
 	const size_t numofLines = cem::CountReturn(stream, size) + 1;
-	const size_t lineOfMaxLength = cem::LineOfMaxLength(stream, size);
+	const char ** linePointers = StartOfLinePointers(stream, size, numofLines);
 
-	dataSize = sizeof(char) * numofLines * lineOfMaxLength;
-	data = (char*)malloc(dataSize);
-	ZeroClear(data, dataSize);
+	lines = LineToStringArray(linePointers, numofLines, size);
+
+	free(linePointers);
+	free(stream);
 }
 
-void * cem::DataFile::ReadFile()
+void * cem::DataFile::ReadFile(size_t & size)
 {
 	FILE* fp;
 
@@ -26,19 +28,18 @@ void * cem::DataFile::ReadFile()
 }
 
 cem::DataFile::DataFile(const std::string & path)
-	: path(path), data(nullptr)
+	: path(path)
 {
 	InitializeDataFile();
 }
 
 cem::DataFile::DataFile(const char * path)
-	: path(path), data(nullptr)
+	: path(path)
 {
 	InitializeDataFile();
 }
 
 cem::DataFile::~DataFile()
 {
-	if (data != nullptr)
-		free(data);
+	
 }
