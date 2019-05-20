@@ -7,6 +7,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	PAINTSTRUCT ps;
 
 	LPCSTR pathLabel = TEXT("Config Path: ");
+	LPCSTR computeLabel = TEXT("Compute");
 
 	switch (msg)
 	{
@@ -52,7 +53,13 @@ int WINAPI WinMain(
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		NULL, NULL, hInstance, NULL);
 
-	if (hwnd == NULL) return 0;
+	CreateWindow(
+		TEXT("BUTTON"), TEXT("Compute"),
+		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+		0, 32, 100, 32,
+		hwnd, NULL, hInstance, NULL);
+
+	if (hwnd == NULL) return -1;
 
 	while (GetMessage(&msg, NULL, 0, 0)) DispatchMessage(&msg);
 
