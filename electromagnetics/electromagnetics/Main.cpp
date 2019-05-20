@@ -50,9 +50,10 @@ int WINAPI WinMain(
 
 	hwnd = CreateWindow(
 		caption, caption, WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+		CW_USEDEFAULT, CW_USEDEFAULT, 480, 320,
 		NULL, NULL, hInstance, NULL);
 
+	// 計算ボタンの表示
 	CreateWindow(
 		TEXT("BUTTON"), TEXT("Compute"),
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
