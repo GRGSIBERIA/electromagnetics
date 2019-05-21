@@ -20,6 +20,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 		TextOut(hdc, 10, 10, pathLabel, lstrlen(pathLabel));
 		EndPaint(hwnd, &ps);
 		return 0;
+
+	case WM_CREATE:
+		CreateWindow(
+			TEXT("EDIT"), TEXT("Test Text"),
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
+			100, 8, 100, 24, hwnd, (HMENU)1,
+			((LPCREATESTRUCT)(lp))->hInstance, NULL);
+		return 0;
 	}
 	return DefWindowProc(hwnd, msg, wp, lp);
 }
@@ -57,12 +65,16 @@ int WINAPI WinMain(
 	CreateWindow(
 		TEXT("BUTTON"), TEXT("Compute"),
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-		0, 32, 100, 32,
+		0, 32 + 8, 100, 32,
 		hwnd, NULL, hInstance, NULL);
 
 	if (hwnd == NULL) return -1;
 
-	while (GetMessage(&msg, NULL, 0, 0)) DispatchMessage(&msg);
+	while (GetMessage(&msg, NULL, 0, 0)) 
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 
 	return msg.wParam;
 
