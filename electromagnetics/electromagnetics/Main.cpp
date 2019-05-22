@@ -1,6 +1,8 @@
 ﻿#include <iostream>
 #include <Windows.h>
 
+HWND computeButton;
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	HDC hdc;
@@ -27,6 +29,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
 			100, 8, 100, 24, hwnd, (HMENU)1,
 			((LPCREATESTRUCT)(lp))->hInstance, NULL);
+		return 0;
+
+	case WM_RBUTTONDOWN:
+		// ここでcomputeButtonが押されたときの挙動を書く
+		MessageBox(NULL, TEXT("hoge"), TEXT("Hoge"), MB_OK);
 		return 0;
 	}
 	return DefWindowProc(hwnd, msg, wp, lp);
@@ -62,7 +69,7 @@ int WINAPI WinMain(
 		NULL, NULL, hInstance, NULL);
 
 	// 計算ボタンの表示
-	CreateWindow(
+	computeButton = CreateWindow(
 		TEXT("BUTTON"), TEXT("Compute"),
 		WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 		0, 32 + 8, 100, 32,
