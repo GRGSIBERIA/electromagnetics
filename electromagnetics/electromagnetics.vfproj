@@ -46,8 +46,10 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="ソースファイル" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="Files">
+		<File RelativePath=".\Configure.f90"/>
+		<File RelativePath=".\FileData.f90"/></Filter>
 		<File RelativePath=".\ElectroMagnetics.f90"/>
-		<File RelativePath=".\FileData.f90"/>
 		<File RelativePath=".\FileUtil.f90"/></Filter>
 		<Filter Name="ヘッダーファイル" Filter="fi;fd"/>
 		<Filter Name="リソースファイル" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>

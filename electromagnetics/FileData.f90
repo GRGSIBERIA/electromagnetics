@@ -19,7 +19,7 @@
         
         ! ファイルを開く前に存在を確認する        
         file%fd = fd
-        file%numof_lines = 1
+        file%numof_lines = 0
         file%max_length = 0
         CALL Exists(path)
         
