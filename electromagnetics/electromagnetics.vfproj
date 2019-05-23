@@ -47,7 +47,7 @@
 	<Files>
 		<Filter Name="ソースファイル" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<Filter Name="Files">
-		<File RelativePath=".\Configure.f90"/>
+		<File RelativePath=".\ConfigureFile.f90"/>
 		<File RelativePath=".\FileData.f90"/></Filter>
 		<File RelativePath=".\ElectroMagnetics.f90"/>
 		<File RelativePath=".\FileUtil.f90"/></Filter>
