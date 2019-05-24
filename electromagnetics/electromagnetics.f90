@@ -2,6 +2,7 @@
     program ElectroMagnetics
     use ConfigureFileModule
     use CommandLine
+    use CommandInterpreter
     implicit none
     character(256), dimension(:), allocatable :: commands
     
@@ -10,7 +11,7 @@
     
     commands = GetCommandLine(0)
     
-    
+    CALL StartCommandInterpreter(commands)
     
     end program ElectroMagnetics
 

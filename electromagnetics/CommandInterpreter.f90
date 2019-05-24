@@ -7,31 +7,18 @@
     subroutine PrintHelp()
         implicit none
         
-        PRINT *, "Usage:", "cem.exe [command] [<arguments>]"
-        PRINT *, "Attension:", "Execute only the first command."
+        PRINT *, "Usage: cem.exe [command] [<arguments>]"
+        PRINT *, "Attension: Execute only the first command."
         PRINT *, "Commands:"
-        PRINT *, "-h", "See help."
-        PRINT *, "-t [input report] [output file]", "Extract times from an abaqus report file."
-        PRINT *, "-r [input report] [output file]", "Extract displacements from an abaqus report file."
-    end subroutine
-    
-    ! レポートから時間を抽出する
-    subroutine ExtractTimeFromReport(input, output)
-        implicit none
-        character(256), intent(in) :: input, output
-        
-        
-    end subroutine
-    
-    ! レポートから変位を抽出する
-    subroutine ExtractDisplacementFromReport(input, output)
-        implicit none
-        character(256), intent(in) :: input, output
-        
-        
+        PRINT *, "-h, See help."
+        PRINT *, "-t [input report] [output file], Extract times from an abaqus report file."
+        PRINT *, "-r [input report] [output file], Extract displacements from an abaqus report file."
     end subroutine
     
     subroutine StartCommandInterpreter(commands)
+        use ExtractTimeModule
+        use ExtractDisplacementModule
+        
         implicit none
         character(256), dimension(:), intent(in) :: commands
         
@@ -52,7 +39,6 @@
                     goto 200    ! 引数がエラってる
                 end if
                 CALL ExtractTimeFromReport(commands(i+1), commands(i+2))
-                
                 goto 100
                 
             else if (INDEX(commands(i), "-r") > 0) then
