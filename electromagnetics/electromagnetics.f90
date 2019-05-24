@@ -1,10 +1,11 @@
 ﻿
     program ElectroMagnetics
-    use FileDataModule
+    use ConfigureFileModule
     implicit none
 
-    type(FileData) file
-    file = init_FileData(20, "E:\temp\abaqus.rpt")
+    type(ConfigureFile) config
+    config = init_ConfigureFile(20, "Config.txt", 21)
+    
     
     end program ElectroMagnetics
 

@@ -18,13 +18,12 @@
         integer i
         
         ! ファイルを開く前に存在を確認する        
-        file%fd = fd
         file%numof_lines = 0
         CALL Exists(path)
         
         ! ファイルサイズだけ調べてファイルを開く
         inquire(file=path, size=file%size)
-        OPEN(fd, file=path, status="old", blocksize=1024, buffercount=1024)
+        OPEN(fd, file=path, status="old", blocksize=file%size)
         
         ! 行数をカウントする
         do
@@ -43,5 +42,12 @@
         
         CLOSE(fd)
     end function
+    
+    subroutine final_FileData(file)
+        implicit none
+        type(FileData) file
+        
+        DEALLOCATE (file%lines)
+    end subroutine
         
     end module

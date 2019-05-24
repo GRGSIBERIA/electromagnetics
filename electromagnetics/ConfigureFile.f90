@@ -5,22 +5,27 @@
     type InputFile
         ! inputはジオメトリの情報
         ! reportは入力する時刻歴データの情報
-        integer :: inputfd, reportfd
+        integer :: input_fd, report_fd
     end type
     
     ! 設定ファイルの構造体
     type ConfigureFile
         integer :: output_fd
+        integer :: time_fd
         
         integer :: numof_parts, numof_coils
-        integer, dimension(:), allocatable :: part_input_fds, part_report_fds
-        integer, dimension(:), allocatable :: top_report_fds, bottom_report_fds
-        integer, dimension(:), allocatable :: top_input_fds, bottom_input_fds
-        
         type(InputFile), dimension(:), allocatable :: parts, tops, bottoms
     end type
     
     contains
+    
+    ! 入力ファイルを閉じる処理
+    subroutine final_InputFile(file)
+        implicit none
+        type(InputFile) file
+        CLOSE (file%input_fd)
+        CLOSE (file%report_fd)
+    end subroutine
     
     ! InputFile構造体の初期化
     type(InputFile) function init_InputFile(nowfd, inputpath, reportpath) result(file)
@@ -28,8 +33,8 @@
         integer, intent(inout) :: nowfd
         character(256), intent(in) :: inputpath, reportpath
         
-        CALL ReadAsOpen(inputpath, nowfd, file%inputfd, "old")
-        CALL ReadAsOpen(reportpath, nowfd, file%reportfd, "old")
+        CALL ReadAsOpen(inputpath, nowfd, file%input_fd, "old")
+        CALL ReadAsOpen(reportpath, nowfd, file%report_fd, "old")
     end function
     
     ! ファイルを読み込んでから，ファイルを開く処理を行う
@@ -90,6 +95,10 @@
         ! 実際に設定を読み込む
         count = 1
         do
+            if (count > file%numof_lines) then
+                goto 100
+            end if
+            
             if (INDEX(file%lines(count), "*OutputFile") > 0) then
                 ! *OutputFile (1つだけ定義，複数存在する場合は後続の定義に置換)
                 ! 出力ファイルへのパス
@@ -100,12 +109,11 @@
                 ! *InputFile (複数定義可能)
                 ! 節点座標のパス
                 ! レポートのパス
-                count = count + 1
-                part_count = part_count + 1
                 
                 ! 磁化するパートの読み込み
-                config%parts(part_count) = init_InputFile(nowfd, file%lines(count), file%lines(count + 1))
-                count = count + 1
+                part_count = part_count + 1
+                config%parts(part_count) = init_InputFile(nowfd, file%lines(count + 1), file%lines(count + 2))
+                count = count + 2
                 
             else if (INDEX(file%lines(count), "*CoilFile") > 0) then
                 ! *CoilFile (複数定義可能)
@@ -113,23 +121,48 @@
                 ! topのレポートのパス
                 ! bottomの節点座標のパス
                 ! bottomのレポートのパス
-                count = count + 1
                 coil_count = coil_count + 1
                 
-                ! コイル上面の読み込み
-                config%tops(coil_count) = init_InputFile(nowfd, file%lines(count), file%lines(count + 1))
+                ! コイル上面, 底面の読み込み
+                config%tops(coil_count) = init_InputFile(nowfd, file%lines(count + 1), file%lines(count + 2))
+                config%bottoms(coil_count) = init_InputFile(nowfd, file%lines(count + 3), file%lines(count + 4))
+                count = count + 4
                 
-                ! コイル底面の読み込み
-                config%bottoms(coil_count) = init_InputFile(nowfd, file%lines(count + 2), file%lines(count + 3))
+            else if (INDEX(file%lines(count), "*TimeFile") > 0) then
+                ! *TimeFile(1つだけ定義可能)
+                ! 時刻歴定義ファイルのパス
+                count = count + 1
+                CALL ReadAsOpen(file%lines(count), nowfd, config%time_fd, "old")
                 
-                count = count + 3
             end if
             
             count = count + 1
         end do
-        
-        
-        
+100     continue    
+    
     end function
+    
+    ! 設定ファイルの終了処理
+    subroutine final_ConfigureFile(config)
+        implicit none
+        type(ConfigureFile) config
+        integer i
+        
+        CLOSE (config%output_fd)
+        CLOSE (config%time_fd)
+        
+        do i = 0, config%numof_parts
+            CALL final_InputFile(config%parts(i))
+        end do
+        
+        do i = 0, config%numof_coils
+            CALL final_InputFile(config%tops(i))
+            CALL final_InputFile(config%bottoms(i))
+        end do
+        
+        DEALLOCATE (config%parts)
+        DEALLOCATE (config%tops)
+        DEALLOCATE (config%bottoms)
+    end subroutine
     
     end module
