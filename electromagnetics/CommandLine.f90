@@ -2,8 +2,20 @@
     
     implicit none
     
-    contains
+	contains
     
+	function TestCommand() result(commands)
+		implicit none
+		character(256), dimension(:), allocatable :: commands
+		
+		ALLOCATE (commands(4))
+		commands(2) = "-t"
+		commands(3) = "assets/tine.rpt"
+		commands(4) = "assets/time.def"
+	end function
+	
+	! コマンドライン引数を取得するための関数
+	! test = 0のときは予め用意したコマンドラインを挿入
     function GetCommandLine(test) result(commands)
         implicit none
         character(256), dimension(:), allocatable :: commands
@@ -11,8 +23,8 @@
         
         integer i, length, status
         
-        if (test /= 0) then
-            
+        if (test == 0) then
+            commands = TestCommand()
         else
             ALLOCATE (commands(COMMAND_ARGUMENT_COUNT() + 1))
             

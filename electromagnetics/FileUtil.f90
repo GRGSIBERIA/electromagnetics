@@ -15,6 +15,31 @@
             STOP
         end if
         
-    end subroutine
+	end subroutine
     
+	logical function OpenedFD(fd) result(opened_status)
+		implicit none
+		integer, intent(in) :: fd
+		
+		inquire(unit=fd, opened=opened_status)
+	end function
+	
+	! 有効なFDを探索する
+	integer function ScanValidFD(infd) result(scan)
+		implicit none
+		integer, intent(in) :: infd
+		
+		integer fd
+		fd = infd
+		
+		do
+			if (OpenedFD(fd) == .FALSE.) then
+				scan = fd
+				goto 100	! 開いていなかったら抜ける
+			end if
+			fd = fd + 1
+		end do
+100		continue
+	end function
+	
     end module

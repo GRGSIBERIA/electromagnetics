@@ -10,9 +10,12 @@
         PRINT *, "Usage: cem.exe [command] [<arguments>]"
         PRINT *, "Attension: Execute only the first command."
         PRINT *, "Commands:"
-        PRINT *, "-h, See help."
-        PRINT *, "-t [input report] [output file], Extract times from an abaqus report file."
-        PRINT *, "-r [input report] [output file], Extract displacements from an abaqus report file."
+        PRINT *, "-h"
+		PRINT *, "    ", "See help."
+        PRINT *, "-t [input report] [output file]"
+		PRINT *, "    ", "Extract times from an abaqus report file."
+        PRINT *, "-r [input report] [output file]
+		PRINT *, "    ", "Extract displacements from an abaqus report file."
     end subroutine
     
     subroutine StartCommandInterpreter(commands)
