@@ -14,7 +14,7 @@
 		PRINT *, "    ", "See help."
         PRINT *, "-t [input report] [output file]"
 		PRINT *, "    ", "Extract times from an abaqus report file."
-        PRINT *, "-r [input report] [output file]
+        PRINT *, "-r [input report] [output file]"
 		PRINT *, "    ", "Extract displacements from an abaqus report file."
     end subroutine
     

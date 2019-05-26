@@ -52,7 +52,9 @@
 		OPEN (inputfd, file=input, status="old")
 		OPEN (outputfd, file=output, status="replace")
 		
+		PRINT *, "Reading a report file."
 		CALL ReadReportFile(inputfd, outputfd)
+		PRINT *, "Extracted a report file into an output."
 		
 		CLOSE (inputfd)
 		CLOSE (outputfd)
