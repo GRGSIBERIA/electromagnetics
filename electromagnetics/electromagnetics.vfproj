@@ -53,7 +53,8 @@
 		<File RelativePath=".\ExtractTime.f90"/></Filter>
 		<Filter Name="Files">
 		<File RelativePath=".\ConfigureFile.f90"/>
-		<File RelativePath=".\FileData.f90"/></Filter>
+		<File RelativePath=".\FileData.f90"/>
+		<File RelativePath=".\NodeData.f90"/></Filter>
 		<File RelativePath=".\ElectroMagnetics.f90"/>
 		<File RelativePath=".\FileUtil.f90"/></Filter>
 		<Filter Name="ヘッダーファイル" Filter="fi;fd"/>

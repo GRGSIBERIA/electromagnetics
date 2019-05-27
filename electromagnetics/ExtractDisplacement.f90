@@ -50,7 +50,6 @@
                 header_position(count) = i + 2
                 
                 ! 後ろに戻りながら空白行が見つかるまでヘッダを作り続ける
-				!headers(count) = adjustl(file%lines(i)(pos:))
                 header = file%lines(i)
                 header = adjustl(header(pos+5:))
 				tmp = i - 1

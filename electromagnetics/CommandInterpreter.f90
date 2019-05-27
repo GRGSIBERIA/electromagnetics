@@ -46,7 +46,7 @@
                 
             else if (INDEX(commands(i), "-r") > 0) then
                 ! レポートから変位を抽出する
-                ! -r <入力レポート> <出力ファイル>
+                ! -r <パート定義> <入力レポート> <出力ファイル>
                 if (size(commands) < 4) then
                     PRINT *, "ERROR: Insufficient arguments"
                     goto 200
@@ -56,14 +56,16 @@
                 
             else if (INDEX(commands(i), "-h") > 0) then
                 ! ヘルプを表示してプログラムを止める
-200             continue                
-                CALL PrintHelp()
-                STOP
+                goto 200
                 
             end if
             
             i = i + 1
         end do
+200     continue
+        CALL PrintHelp()
+        STOP
+        
 100     continue
         
     end subroutine

@@ -8,10 +8,11 @@
 		implicit none
 		character(256), dimension(:), allocatable :: commands
 		
-		ALLOCATE (commands(4))
+		ALLOCATE (commands(5))
 		commands(2) = "-r"
-		commands(3) = "assets/tine.rpt"
-		commands(4) = "assets/tine.def"
+        commands(3) = "assets/tine.def"
+		commands(4) = "assets/tine.rpt"
+		commands(5) = "assets/tine.hst"
 	end function
 	
 	! コマンドライン引数を取得するための関数
