@@ -66,32 +66,31 @@
                 count = count + 1
 			end if
 		end do
-	end function
-	
-    ! レポートから変位を抽出する
-    subroutine ExtractDisplacementFromReport(input, output)
-		use FileDataModule
-		use FileUtil
+    end function
+    
+    subroutine ExtractNodeAxisFromHeader(inputfd, inputpath, count, nodeids, axisids, header_positions)
+        use FileDataModule
         implicit none
-        character(256), intent(in) :: input, output
-		
-		integer fd, i, header_count
-		type(FileData) file
-		character(256), dimension(:), allocatable :: headers
-        integer, dimension(:), allocatable :: header_positions
-        integer, dimension(:), allocatable :: nodeids, axisids
+        integer, intent(in) :: inputfd
+        character(256), intent(in) :: inputpath
+        integer, intent(out) :: count
+        integer, dimension(:), allocatable, intent(out) :: nodeids, axisids, header_positions
         
-		CALL Exists(input)
-        fd = ScanValidFD(20)
-		file = init_FileData(fd, input)
-		
-		header_count = HeaderCountX(file)
-        ALLOCATE (header_positions(header_count))
-		headers = GenerateHeader(file, header_count, header_positions)
-		
-        ALLOCATE (nodeids(size(headers)))
-        ALLOCATE (axisids(size(headers)))
+        character(256), dimension(:), allocatable :: headers
         
+        integer i
+        type(FileData) file
+        file = init_FileData(inputfd, inputpath)
+        
+        ! ヘッダの数をカウントして確保する領域を確定する
+		count = HeaderCountX(file)
+        ALLOCATE (header_positions(count))
+        ALLOCATE (nodeids(count))
+        ALLOCATE (axisids(count))
+        
+		headers = GenerateHeader(file, count, header_positions)
+		
+        ! ヘッダの情報を抜き出す
         !$omp parallel
         !$omp do
         do i = 1, size(headers)
@@ -99,13 +98,40 @@
         end do
         !$omp end do
         !$omp end parallel
+    end subroutine
+	
+    ! レポートから変位を抽出する
+    subroutine ExtractDisplacementFromReport(nodepath, input, output)
+		use FileDataModule
+		use FileUtil
+        use NodeDataModule
+        implicit none
+        character(256), intent(in) :: input, output, nodepath
+		
+		integer inputfd, nodefd, header_count, maximum_id
+        integer, dimension(:), allocatable :: nodeids, axisids, header_positions
+		type(FileData) file
+        type(NodeData) node
         
-        PRINT *, "MAX NODE ID:", MAXVAL(nodeids(:))
+        CALL Exists(nodepath)
+		CALL Exists(input)
         
-        DEALLOCATE (headers)
-        DEALLOCATE (header_positions)
+        inputfd = ScanValidFD(20)
+        nodefd = ScanValidFD(inputfd + 1)
+        
+        ! ヘッダの情報を抜き出す
+		CALL ExtractNodeAxisFromHeader(inputfd, input, header_count, nodeids, axisids, header_positions)
+        
+        ! 使用する節点情報を読み込む
+        node = nodeid_only_NodeData(nodefd, nodepath)
+        maximum_id = MAXVAL(node%nodeids)
+        PRINT *, "MAXIMUM NODE ID:", maximum_id
+        
+        ! 最後に領域を解放する
         DEALLOCATE (nodeids)
         DEALLOCATE (axisids)
+        DEALLOCATE (header_positions)
+	
     end subroutine
     
     end module

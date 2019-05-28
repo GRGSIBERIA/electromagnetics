@@ -47,11 +47,11 @@
             else if (INDEX(commands(i), "-r") > 0) then
                 ! レポートから変位を抽出する
                 ! -r <パート定義> <入力レポート> <出力ファイル>
-                if (size(commands) < 4) then
+                if (size(commands) < 5) then
                     PRINT *, "ERROR: Insufficient arguments"
                     goto 200
                 end if
-                CALL ExtractDisplacementFromReport(commands(i+1), commands(i+2))
+                CALL ExtractDisplacementFromReport(commands(i+1), commands(i+2), commands(i+3))
                 goto 100
                 
             else if (INDEX(commands(i), "-h") > 0) then

@@ -14,7 +14,7 @@
         character(256) line
         
         do
-            READ (fd, "(A)") line
+            READ (fd, "(A)", end=100) line
             if (INDEX(line, "*Element") > 0) then
                 goto 100
             end if
@@ -31,7 +31,7 @@
         
         count = 0
         do
-            READ (fd, "(A)") line
+            READ (fd, "(A)", end=200) line
             if (INDEX(line, "*") > 0) then
                 goto 200
             end if
@@ -42,29 +42,29 @@
     end function
     
     ! nodeidsに値を入れるための処理
-    subroutine SetNodeId(fd, node)
+    subroutine SetNodeId(fd, nodeids)
         implicit none
         integer, intent(in) :: fd
-        type(NodeData), intent(out) :: node
+        integer, dimension(:,:), intent(out) :: nodeids
         
         character(256) line, tmp
         integer id, a, b, c, d
         
         do
-            READ (fd, "(A)") line
+            READ (fd, "(A)", end=300) line
             if (INDEX(line, "*") > 0) then
                 goto 300
             end if
-            READ (line, "(I,I,I,I,I,A)") id, a, b, c, d, tmp
+            READ (line, *) id, a, b, c, d, tmp
             
-            node%nodeids(:,id) = (/ a, b, c, d /)
+            nodeids(:,id) = (/ a, b, c, d /)
         end do
 300     continue
         
     end subroutine
     
     ! ノードIDだけ読み込む
-    type(NodeData) function nodeids_NodeData(fd, path) result(node)
+    type(NodeData) function nodeid_only_NodeData(fd, path) result(node)
         implicit none
         integer, intent(in) :: fd
         character(*), intent(in) :: path
@@ -82,7 +82,7 @@
         ! 頭に戻ってデータをセットする
         REWIND(fd)
         CALL SearchElement(fd)
-        CALL SetNodeId(fd, node)
+        CALL SetNodeId(fd, node%nodeids)
         
         CLOSE (fd)
     end function
