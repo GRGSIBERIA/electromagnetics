@@ -229,6 +229,8 @@
         ! 時刻歴を書き出す
         CALL WriteDisplacementFromData(output, maximum_id, numof_times, histories)
         
+        PRINT *, "SUCCEEDED TO WRITE A TIME HISTORY FILE."
+        
         ! 最後に領域を解放する
         DEALLOCATE (nodeids)
         DEALLOCATE (axisids)
