@@ -336,3 +336,4 @@ ASALocalRun/
 *.out
 *.def
 *.part
+*.hst

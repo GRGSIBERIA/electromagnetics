@@ -1,4 +1,5 @@
 ﻿    module ExtractDisplacementModule
+    implicit none
     
 	contains
     
@@ -68,7 +69,7 @@
 		end do
     end function
     
-    subroutine ExtractNodeAxisFromHeader(inputfd, inputpath, count, nodeids, axisids, header_positions)
+    type(FileData) function ExtractNodeAxisFromHeader(inputfd, inputpath, count, nodeids, axisids, header_positions) result(file)
         use FileDataModule
         implicit none
         integer, intent(in) :: inputfd
@@ -79,7 +80,6 @@
         character(256), dimension(:), allocatable :: headers
         
         integer i
-        type(FileData) file
         file = init_FileData(inputfd, inputpath)
         
         ! ヘッダの数をカウントして確保する領域を確定する
@@ -98,6 +98,92 @@
         end do
         !$omp end do
         !$omp end parallel
+    end function
+    
+    integer function CountTime(lines, top_header_pos) result(count)
+        use FileDataModule
+        implicit none
+        character(*), dimension(:), allocatable, intent(in) :: lines
+        integer, intent(in) :: top_header_pos
+        integer i
+        
+        count = 0
+        i = top_header_pos
+        do
+            if (len_trim(lines(i)) < 1) then
+                goto 200
+            end if
+            count = count + 1
+            i = i + 1
+        end do
+200     continue
+    end function
+    
+    double precision function ReadDisplacementFromLine(line) result(val)
+        implicit none
+        character(160), intent(in) :: line
+        double precision tmp
+        
+        READ (line, *) tmp, val
+    end function
+    
+    subroutine ReadDisplacementFromReport(file, header_count, header_positions, nodeids, axisids, numof_times, maximum_id, histories)
+        use FileDataModule
+        implicit none
+        type(FileData), intent(in) :: file
+        integer, intent(in) :: header_count
+        integer, dimension(header_count) :: header_positions, nodeids, axisids
+        integer, intent(in) :: numof_times, maximum_id
+        double precision, dimension(3, numof_times, maximum_id) :: histories
+        
+        integer hcnt    ! ヘッダーカウント
+        integer lcnt    ! 行カウント
+        double precision tmp
+        
+        !$omp parallel
+        !$omp do
+        do hcnt = 1, header_count
+            do lcnt = 1, numof_times
+                if (nodeids(hcnt) <= maximum_id) then
+                    histories(axisids(hcnt), lcnt, nodeids(hcnt)) = ReadDisplacementFromLine(file%lines(header_positions(hcnt) + lcnt - 1))
+                end if
+            end do
+        end do
+        !$omp end do
+        !$omp end parallel
+    end subroutine
+    
+    subroutine WriteDisplacementFromData(output, maximum_id, numof_times, histories)
+        use FileUtil
+        implicit none
+        character(256), intent(in) :: output
+        integer, intent(in) :: maximum_id, numof_times
+        double precision, dimension(3, numof_times, maximum_id), intent(in) :: histories
+        
+        integer outputfd, nid, tid
+        
+        outputfd = ScanValidFD(30)
+        OPEN (outputfd, file=output, status="replace")
+        
+        WRITE (outputfd, *) "*Time", numof_times
+        WRITE (outputfd, *) "*Vertex", maximum_id
+        
+        do nid = 1, maximum_id
+            if (SUM(histories(:, :, nid)) == 0.0d0) then
+                goto 300
+            end if
+            
+            WRITE (outputfd, *) "*Node", nid
+            
+            do tid = 1, numof_times
+                WRITE (outputfd, *) histories(:, tid, nid)
+            end do
+            
+300         continue            
+        end do
+        
+        CLOSE (outputfd)
+        
     end subroutine
 	
     ! レポートから変位を抽出する
@@ -108,8 +194,10 @@
         implicit none
         character(256), intent(in) :: input, output, nodepath
 		
-		integer inputfd, nodefd, header_count, maximum_id
+		integer inputfd, nodefd, header_count, maximum_id, numof_times
         integer, dimension(:), allocatable :: nodeids, axisids, header_positions
+        double precision, dimension(:,:,:), allocatable :: histories
+        
 		type(FileData) file
         type(NodeData) node
         
@@ -120,18 +208,33 @@
         nodefd = ScanValidFD(inputfd + 1)
         
         ! ヘッダの情報を抜き出す
-		CALL ExtractNodeAxisFromHeader(inputfd, input, header_count, nodeids, axisids, header_positions)
+		file = ExtractNodeAxisFromHeader(inputfd, input, header_count, nodeids, axisids, header_positions)
         
         ! 使用する節点情報を読み込む
         node = nodeid_only_NodeData(nodefd, nodepath)
-        maximum_id = MAXVAL(node%nodeids)
+        maximum_id = MAXVAL(node%nodeids)   ! 最大の節点番号
         PRINT *, "MAXIMUM NODE ID:", maximum_id
+        
+        ! 時間の数をカウントする
+        numof_times = CountTime(file%lines, header_positions(1))
+        PRINT *, "NUMBER OF TIMES:", numof_times
+        
+        ! 時刻歴の領域を確保する
+        ALLOCATE (histories(3, numof_times, maximum_id))
+        histories = 0.0d0
+        
+        ! 時刻歴を読み込む
+        CALL ReadDisplacementFromReport(file, header_count, header_positions, nodeids, axisids, numof_times, maximum_id, histories)
+        
+        ! 時刻歴を書き出す
+        CALL WriteDisplacementFromData(output, maximum_id, numof_times, histories)
         
         ! 最後に領域を解放する
         DEALLOCATE (nodeids)
         DEALLOCATE (axisids)
         DEALLOCATE (header_positions)
-	
+	    DEALLOCATE (histories)
+        
     end subroutine
     
     end module

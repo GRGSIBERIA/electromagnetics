@@ -23,7 +23,7 @@
         
         ! ファイルサイズだけ調べてファイルを開く
         inquire(file=path, size=file%size)
-        OPEN(fd, file=path, status="old", blocksize=file%size)
+        OPEN(fd, file=path, status="old")
         
         ! 行数をカウントする
         do
