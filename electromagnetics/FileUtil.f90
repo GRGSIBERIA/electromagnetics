@@ -17,23 +17,20 @@
         
 	end subroutine
     
-	logical function OpenedFD(fd) result(opened_status)
-		implicit none
-		integer, intent(in) :: fd
-		
-		inquire(unit=fd, opened=opened_status)
-	end function
-	
 	! 有効なFDを探索する
 	integer function ScanValidFD(infd) result(scan)
 		implicit none
 		integer, intent(in) :: infd
 		
 		integer fd
+        logical opened_status
+        
 		fd = infd
 		
 		do
-			if (OpenedFD(fd) == .FALSE.) then
+            ! FDが既に使用済みかどうか調査する
+            inquire(unit=fd, opened=opened_status)
+			if (opened_status == .FALSE.) then
 				scan = fd
 				goto 100	! 開いていなかったら抜ける
 			end if

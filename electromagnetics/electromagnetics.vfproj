@@ -52,11 +52,16 @@
 		<File RelativePath=".\ExtractDisplacement.f90"/>
 		<File RelativePath=".\ExtractTime.f90"/></Filter>
 		<Filter Name="Files">
-		<File RelativePath=".\ConfigureFile.f90"/>
-		<File RelativePath=".\FileData.f90"/>
+		<Filter Name="Abaqus">
 		<File RelativePath=".\NodeData.f90"/></Filter>
-		<File RelativePath=".\ElectroMagnetics.f90"/>
+		<Filter Name="Normalized">
+		<File RelativePath=".\PartFile.f90"/>
+		<File RelativePath=".\TimeFile.f90"/></Filter>
+		<File RelativePath=".\ConfigureFile.f90"/>
+		<File RelativePath=".\FileData.f90"/></Filter>
+		<Filter Name="Util">
 		<File RelativePath=".\FileUtil.f90"/></Filter>
+		<File RelativePath=".\ElectroMagnetics.f90"/></Filter>
 		<Filter Name="ヘッダーファイル" Filter="fi;fd"/>
 		<Filter Name="リソースファイル" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<File RelativePath=".\ReadMe.txt"/></Files>
