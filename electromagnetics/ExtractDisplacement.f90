@@ -166,7 +166,7 @@
         OPEN (outputfd, file=output, status="replace")
         
         WRITE (outputfd, *) "*Time", numof_times
-        WRITE (outputfd, *) "*Vertex", maximum_id
+        WRITE (outputfd, *) "*NumNode", maximum_id
         
         do nid = 1, maximum_id
             if (SUM(histories(:, :, nid)) == 0.0d0) then
