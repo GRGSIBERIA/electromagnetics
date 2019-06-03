@@ -35,7 +35,7 @@
         ! 時間の領域を確保してファイルからデータを読み込む
         ALLOCATE (time%times(time%count))
         REWIND (fd)
-        do i = 1, 
+        do i = 1, SIZE(time%times)
             READ (fd, *) time%times(i)
         end do
         

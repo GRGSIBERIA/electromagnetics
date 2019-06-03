@@ -55,6 +55,7 @@
 		<Filter Name="Abaqus">
 		<File RelativePath=".\NodeData.f90"/></Filter>
 		<Filter Name="Normalized">
+		<File RelativePath=".\HistoryFile.f90"/>
 		<File RelativePath=".\PartFile.f90"/>
 		<File RelativePath=".\TimeFile.f90"/></Filter>
 		<File RelativePath=".\ConfigureFile.f90"/>

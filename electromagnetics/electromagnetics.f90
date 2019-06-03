@@ -9,7 +9,7 @@
     !type(ConfigureFile) config
     !config = init_ConfigureFile(20, "Config.txt", 21)
     
-    commands = GetCommandLine(0)
+    commands = GetCommandLine(1)
     
     CALL StartCommandInterpreter(commands)
     

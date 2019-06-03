@@ -24,7 +24,7 @@
         
         integer i, length, status
         
-        if (test == 0) then
+        if (test == 1) then
             commands = TestCommand()
         else
             ALLOCATE (commands(COMMAND_ARGUMENT_COUNT() + 1))

@@ -12,10 +12,12 @@
         PRINT *, "Commands:"
         PRINT *, "-h"
 		PRINT *, "    ", "See help."
+        PRINT *, "-a [config file]"
+        PRINT *, "    ", "Analyzes electromagnetics to use a configuration file"
         PRINT *, "-t [input report] [output file]"
-		PRINT *, "    ", "Extract times from an abaqus report file."
+		PRINT *, "    ", "Extracts times from an abaqus report file."
         PRINT *, "-r [input report] [output file]"
-		PRINT *, "    ", "Extract displacements from an abaqus report file."
+		PRINT *, "    ", "Extracts displacements from an abaqus report file."
     end subroutine
     
     subroutine StartCommandInterpreter(commands)
@@ -53,6 +55,15 @@
                 end if
                 CALL ExtractDisplacementFromReport(commands(i+1), commands(i+2), commands(i+3))
                 goto 100
+                
+            else if (INDEX(commands(i), "-a") > 0) then
+                ! 解析を行う
+                ! -r <設定ファイル>
+                if (size(commands) < 3) then
+                    PRINT *, "ERROR: Insufficient arguments"
+                    goto 200
+                end if
+                
                 
             else if (INDEX(commands(i), "-h") > 0) then
                 ! ヘルプを表示してプログラムを止める

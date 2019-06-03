@@ -153,8 +153,8 @@
         part%nodes = ReadNodes(fd, part%maximum_node_id)
         
         ! translate‚Ærotate‚Ì“Ç‚İ‚İ
-        part%translate = ReadTransform(fd, "*Translate", 0)
-        part%rotate = ReadTransform(fd, "*Rotate", 0)
+        part%translate = ReadTransform(fd, "*Translate")
+        part%rotate = ReadTransform(fd, "*Rotate")
         
     end function
     
