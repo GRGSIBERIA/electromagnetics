@@ -23,6 +23,7 @@
     subroutine StartCommandInterpreter(commands)
         use ExtractTimeModule
         use ExtractDisplacementModule
+        use AnalyzeModule
         
         implicit none
         character(256), dimension(:), intent(in) :: commands
@@ -63,7 +64,8 @@
                     PRINT *, "ERROR: Insufficient arguments"
                     goto 200
                 end if
-                
+                CALL AnalyzeElectromagnetics(commands(i+1))
+                goto 100
                 
             else if (INDEX(commands(i), "-h") > 0) then
                 ! ヘルプを表示してプログラムを止める
