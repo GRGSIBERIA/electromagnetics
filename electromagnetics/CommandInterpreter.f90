@@ -16,7 +16,7 @@
         PRINT *, "    ", "Analyzes electromagnetics to use a configuration file"
         PRINT *, "-t [input report] [output file]"
 		PRINT *, "    ", "Extracts times from an abaqus report file."
-        PRINT *, "-r [input report] [output file]"
+        PRINT *, "-r [.inp file] [input report] [output file]"
 		PRINT *, "    ", "Extracts displacements from an abaqus report file."
     end subroutine
     
