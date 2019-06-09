@@ -1,4 +1,0 @@
-*OutputFile
-assets\output.out
-*TimeFile
-assets\time.def
