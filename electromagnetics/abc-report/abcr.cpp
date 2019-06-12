@@ -33,18 +33,34 @@ const char* ReportImporter::_ReadRawData(const char* const filepath, int64_t& fi
 	return rawdata;
 }
 
+const int64_t ReportImporter::_CountLine(const std::string& rawstr) const
+{
+	int64_t count = 1;
+
+	#pragma omp parallel for reduction(+:count)
+	for (int64_t i = 0; i < (int64_t)rawstr.size(); ++i)
+	{
+		if (rawstr[i] == '\n')
+			++count;
+	}
+	
+	return count;
+}
+
 std::vector<std::string> ReportImporter::_GetLines(const std::string& rawstr) const
 {
 	std::vector<std::string> lines;
 	std::string line;
 	line.reserve(128);
+	lines.resize(_CountLine(rawstr), line);
+	int64_t count = 0;
 
 	// 改行コードで区切る
 	for (const char c : rawstr)
 	{
 		if (c == '\n')
 		{
-			lines.push_back(line);
+			lines[count] = line;
 			line.clear();
 		}
 		else
@@ -60,7 +76,7 @@ const int64_t ReportImporter::_CountHeader(const std::vector<std::string>& lines
 	int64_t count = 1;
 
 	#pragma omp parallel for reduction(+:count)
-	for (int64_t i = 0; i < lines.size(); ++i)
+	for (int64_t i = 0; i < (int64_t)lines.size(); ++i)
 	{
 		if (lines[i].find("  X  ") > 0)
 			++count;
@@ -72,8 +88,9 @@ const int64_t ReportImporter::_CountHeader(const std::vector<std::string>& lines
 const std::vector<int64_t> ReportImporter::_MakeHeaderPositions(const std::vector<std::string>& lines) const
 {
 	std::vector<int64_t> retval;
+	retval.reserve(_CountHeader(lines));
 
-	for (int64_t i = 0; i < lines.size(); ++i)
+	for (int64_t i = 0; i < (int64_t)lines.size(); ++i)
 	{
 		if (lines[i].find("  X  ") > 0)
 			retval.push_back(i);
@@ -86,11 +103,21 @@ void ReportImporter::_ReserveHeaderSpace(std::vector<std::string>& headers, cons
 {
 	// ヘッダの容量などを予約しておく
 	headers.reserve(size);
-	headers.resize(size, "");
+	std::string basestr;
+	basestr.reserve(128);
+	headers.resize(size, basestr);
+}
 
-#pragma omp parallel for
-	for (int64_t i = 0; i < size; ++i)
-		headers[i].reserve(128);
+void ReportImporter::_CookingHeaders(std::vector<std::string>& headers, const std::vector<std::string>& lines, const std::vector<int64_t>& headerpos)
+{
+	for (int64_t i = 0; i < (int64_t)headerpos.size(); ++i)
+	{
+		int64_t pos = headerpos[i];
+		headers[i] = lines[pos];
+		--pos;
+
+		
+	}
 }
 
 ReportImporter::ReportImporter(const char* const filepath)
@@ -100,11 +127,14 @@ ReportImporter::ReportImporter(const char* const filepath)
 	const char* rawdata = _ReadRawData(filepath, file_size);
 	std::string rawstr(rawdata);
 	auto lines = _GetLines(rawstr);
+	delete[] rawdata;
 
 	// ヘッダの生成
 	std::vector<std::string> headers;
 	std::vector<int64_t> headerpos = _MakeHeaderPositions(lines);
 	_ReserveHeaderSpace(headers, headerpos.size());
+	_CookingHeaders(headers, lines, headerpos);
 
-	delete[] rawdata;
+	Report* rp = new Report(headers, headerpos, lines);
+	report = ReportPtr(rp);
 }

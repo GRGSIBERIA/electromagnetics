@@ -1,4 +1,5 @@
 #include <iostream>
+#include "abcr.h"
 using namespace std;
 
 void ShowHelp()
@@ -13,5 +14,5 @@ int main(const int argc, const char** const argv)
 	if (argc <= 1)
 		ShowHelp();
 
-	
+	auto importer = ReportImporter(argv[1]);
 }
