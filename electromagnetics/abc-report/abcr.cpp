@@ -49,10 +49,14 @@ const int64_t ReportImporter::_CountLine(const std::string& rawstr) const
 
 std::vector<std::string> ReportImporter::_GetLines(const std::string& rawstr) const
 {
-	std::vector<std::string> lines;
 	std::string line;
-	line.reserve(128);
-	lines.resize(_CountLine(rawstr), line);
+	const int N = 64 + 12;
+	line.resize(N);
+
+	// 行の数を用意する
+	const int64_t count_line = _CountLine(rawstr);
+	std::vector<std::string> lines(count_line, line);
+
 	int64_t count = 0;
 
 	// 改行コードで区切る
@@ -62,6 +66,7 @@ std::vector<std::string> ReportImporter::_GetLines(const std::string& rawstr) co
 		{
 			lines[count] = line;
 			line.clear();
+			++count;
 		}
 		else
 		{
@@ -78,7 +83,7 @@ const int64_t ReportImporter::_CountHeader(const std::vector<std::string>& lines
 	#pragma omp parallel for reduction(+:count)
 	for (int64_t i = 0; i < (int64_t)lines.size(); ++i)
 	{
-		if (lines[i].find("  X  ") > 0)
+		if (lines[i].find("  X  ") != std::string::npos)
 			++count;
 	}
 
@@ -92,7 +97,7 @@ const std::vector<int64_t> ReportImporter::_MakeHeaderPositions(const std::vecto
 
 	for (int64_t i = 0; i < (int64_t)lines.size(); ++i)
 	{
-		if (lines[i].find("  X  ") > 0)
+		if (lines[i].find("  X  ") != std::string::npos)
 			retval.push_back(i);
 	}
 
@@ -105,26 +110,65 @@ void ReportImporter::_ReserveHeaderSpace(std::vector<std::string>& headers, cons
 	headers.reserve(size);
 	std::string basestr;
 	basestr.reserve(128);
-	headers.resize(size, basestr);
+	headers.resize(size, basestr);	// これやってもresize先で領域が確保されない
 }
 
-void ReportImporter::_CookingHeaders(std::vector<std::string>& headers, const std::vector<std::string>& lines, const std::vector<int64_t>& headerpos)
+void ReportImporter::_TrimSpace(std::string& line)
 {
+	const char derim[] = " \t\n\r";
+	
+	// 左側の削除
+	const auto left = line.find_first_not_of(derim);
+	if (left != std::string::npos)
+		line.erase(0, left);
+
+	// 右側の削除
+	const auto right = line.find_last_not_of(derim);
+	if (right != std::string::npos)
+		line.erase(right + 1, line.size());
+}
+
+void ReportImporter::_CookingHeaders(std::vector<std::string>& headers, std::vector<std::string>& lines, const std::vector<int64_t>& headerpos)
+{
+	#pragma omp parallel for
 	for (int64_t i = 0; i < (int64_t)headerpos.size(); ++i)
 	{
-		int64_t pos = headerpos[i];
-		headers[i] = lines[pos];
-		--pos;
-
+		const int64_t lastpos = headerpos[i];
+		int64_t count = lastpos - 1;
+		if (count < 0)
+			count = 0;
 		
+		// 後ろ向きに空行を探す
+		while (lines[count].size() > 4)
+		{
+			--count;
+			if (count < 0) break;
+		}
+		const int64_t firstpos = count + 1;
+
+		// firstpos -> lastpos - 1に向かってヘッダを作る
+		for (int64_t cnt = firstpos; cnt < lastpos; ++cnt)
+		{
+			_TrimSpace(lines[cnt]);
+			headers[i] += lines[cnt];
+		}
+
+		// lastposだけ例外的にXを取り除いたものを作る
+		const auto xpos = lines[lastpos].find("  X  ");
+		if (xpos != std::string::npos)
+		{
+			lines[lastpos].erase(0, xpos + 5);
+			_TrimSpace(lines[lastpos]);
+			headers[i] += lines[lastpos];
+		}
 	}
 }
 
 ReportImporter::ReportImporter(const char* const filepath)
-	: path(filepath)
+	: _path(filepath)
 {
 	// 生データから行ベクトルの生成
-	const char* rawdata = _ReadRawData(filepath, file_size);
+	const char* rawdata = _ReadRawData(filepath, _file_size);
 	std::string rawstr(rawdata);
 	auto lines = _GetLines(rawstr);
 	delete[] rawdata;
@@ -136,5 +180,6 @@ ReportImporter::ReportImporter(const char* const filepath)
 	_CookingHeaders(headers, lines, headerpos);
 
 	Report* rp = new Report(headers, headerpos, lines);
-	report = ReportPtr(rp);
+
+	_report = ReportPtr(rp);
 }
