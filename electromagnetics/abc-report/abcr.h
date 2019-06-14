@@ -18,6 +18,7 @@ class ReportImporter
 {
 	std::string _path;
 	int64_t _file_size;
+	int64_t _maximum_nodeid;
 
 	ReportPtr _report;
 
@@ -35,7 +36,7 @@ private:
 
 public:
 	
-	ReportImporter(const char* const filepath);
+	ReportImporter(const char* const filepath, const int64_t maximum_nodeid);
 
 	const std::string& path() const { return _path; }
 

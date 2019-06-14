@@ -164,8 +164,8 @@ void ReportImporter::_CookingHeaders(std::vector<std::string>& headers, std::vec
 	}
 }
 
-ReportImporter::ReportImporter(const char* const filepath)
-	: _path(filepath)
+ReportImporter::ReportImporter(const char* const filepath, const int64_t maximum_nodeid)
+	: _path(filepath), _maximum_nodeid(maximum_nodeid)
 {
 	// 生データから行ベクトルの生成
 	const char* rawdata = _ReadRawData(filepath, _file_size);
@@ -179,7 +179,9 @@ ReportImporter::ReportImporter(const char* const filepath)
 	_ReserveHeaderSpace(headers, headerpos.size());
 	_CookingHeaders(headers, lines, headerpos);
 
-	Report* rp = new Report(headers, headerpos, lines);
+	// いらないヘッダを削除する
+
+	Report* rp = new Report(_maximum_nodeid, headers, headerpos, lines);
 
 	_report = ReportPtr(rp);
 }
