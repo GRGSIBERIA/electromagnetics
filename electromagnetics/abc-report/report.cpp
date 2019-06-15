@@ -35,7 +35,7 @@ const std::vector<double> Report::_ReadTimes(const int64_t topheader, const std:
 	return times;
 }
 
-Report::Report(std::vector<std::string>& headers, std::vector<int64_t>& headerpos, std::vector<std::string>& lines)
+Report::Report(const std::vector<int64_t>& nodeids, std::vector<std::string>& headers, std::vector<int64_t>& headerpos, std::vector<std::string>& lines)
 {
 	_attribute = _ReadAttribute(headers);
 	_times = _ReadTimes(headerpos[0], lines);

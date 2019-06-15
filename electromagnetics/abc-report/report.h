@@ -50,5 +50,5 @@ class Report
 
 public:
 
-	Report(std::vector<std::string>& headers, std::vector<int64_t>& headerpos, std::vector<std::string>& lines);
+	Report(const std::vector<int64_t>& nodeids, std::vector<std::string>& headers, std::vector<int64_t>& headerpos, std::vector<std::string>& lines);
 };

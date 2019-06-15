@@ -34,6 +34,12 @@ private:
 
 	void _CookingHeaders(std::vector<std::string>& headers, std::vector<std::string>& lines, const std::vector<int64_t>& headerpos);
 
+	const int64_t _ExtractNodeId(const std::string& header) const;
+
+	const std::vector<int64_t> _RejectHeaderOverMaxId(std::vector<std::string>& headers, std::vector<int64_t>& headerpos);
+
+	void _ReshapeHeadersFromNodeId(const std::vector<int64_t>& nodeids, std::vector<std::string>& headers, std::vector<int64_t>& headerpos);
+
 public:
 	
 	ReportImporter(const char* const filepath, const int64_t maximum_nodeid);

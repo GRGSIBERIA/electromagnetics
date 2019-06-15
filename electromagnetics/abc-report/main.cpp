@@ -14,8 +14,5 @@ int main(const int argc, const char** const argv)
 	if (argc <= 1)
 		ShowHelp();
 
-	//auto importer = ReportImporter(argv[1], 1600);
-	int64_t a;
-	sscanf_s(" 128", "%lld", &a);
-	cout << a << endl;
+	auto importer = ReportImporter(argv[1], 1600);
 }
