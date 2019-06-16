@@ -36,13 +36,48 @@ const std::vector<double> Report::_ReadTimes(const int64_t topheader, const std:
 }
 
 Report::Report(const std::vector<int64_t>& nodeids, std::vector<std::string>& headers, std::vector<int64_t>& headerpos, std::vector<std::string>& lines)
+	: _nodeids(nodeids), _histories()
 {
 	_attribute = _ReadAttribute(headers);
 	_times = _ReadTimes(headerpos[0], lines);
 
+	_histories.reserve(_nodeids.size());
+	for (int64_t i = 0; i < (int64_t)_nodeids.size(); ++i)
+	{
+		_histories.emplace_back(nodeids[i], (int64_t)_times.size(), headers[i], headerpos[i], lines);
+	}
 }
 
-History::History():
-	_nodeid(-1), _values()
+History::History()
+	: _values(), _nodeid(-1)
 {
+}
+
+const int64_t History::_ExtractAxisId(const std::string& header) const
+{
+	const auto left = header.find_first_of(" ");
+	return (int64_t)header[left - 1] - 48;
+}
+
+const double History::_ExtractValue(const std::string& line) const
+{
+	const auto left = line.find_first_not_of(" ");
+	const auto center = line.find(" ", left);
+	return std::strtod(&line[center], nullptr);
+}
+
+History::History(const int64_t nodeid, const int64_t numof_times, const std::string& header, const int64_t headerpos, const std::vector<std::string>& lines)
+	: _nodeid(nodeid), _axisid(_ExtractAxisId(header))
+{
+	_values.resize(numof_times);
+
+	int64_t count = headerpos + 2;
+	for (int i = 0; i < numof_times; ++i)
+	{
+		const std::string& line = lines[count];
+		double value = _ExtractValue(line);
+		_values[i] = value;
+
+		++count;
+	}
 }

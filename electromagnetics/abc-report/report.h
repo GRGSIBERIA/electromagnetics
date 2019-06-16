@@ -16,21 +16,27 @@ class NotReportException : public std::exception {};
 */
 class InvalidFormatException : public std::exception {};
 
-struct Vector3
-{
-	double v[3];
-};
-
 /**
 * 時刻歴データ
 */
 class History
 {
 	int64_t _nodeid;
-	std::vector<Vector3> _values;
+	int64_t _axisid;
+	std::vector<double> _values;
+
+	const int64_t _ExtractAxisId(const std::string& header) const;
+
+	const double _ExtractValue(const std::string& line) const;
 
 public:
 	History();
+
+	History(const int64_t nodeid, const int64_t numof_times, const std::string& header, const int64_t headerpos, const std::vector<std::string>& lines);
+
+	const int64_t nodeid() const { return _nodeid; }
+
+	const int64_t axisid() const { return _axisid; }
 };
 
 /**
@@ -38,11 +44,12 @@ public:
 */
 class Report
 {
-	std::string _partname;	// パート名，抽出できれば
-	std::string _attribute;	// 属性値，U，V，Aなど
+	std::string _partname;	//!< パート名，抽出できれば
+	std::string _attribute;	//!< 属性値，U，V，Aなど
 
-	std::vector<double> _times;
-	std::vector<History> _histories;
+	std::vector<double> _times;			//!< 時間
+	std::vector<int64_t> _nodeids;		//!< 節点番号
+	std::vector<History> _histories;	//!< 時刻歴
 
 	const std::string _ReadAttribute(std::vector<std::string>& headers) const;
 
@@ -51,4 +58,10 @@ class Report
 public:
 
 	Report(const std::vector<int64_t>& nodeids, std::vector<std::string>& headers, std::vector<int64_t>& headerpos, std::vector<std::string>& lines);
+
+	const std::vector<double>& times() const { return _times; }
+
+	const std::vector<int64_t>& nodeids() const { return _nodeids; }
+
+	const std::vector<History>& histories() const { return _histories; }
 };

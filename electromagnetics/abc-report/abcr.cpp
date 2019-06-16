@@ -179,7 +179,7 @@ const std::vector<int64_t> ReportImporter::_RejectHeaderOverMaxId(std::vector<st
 	std::vector<int64_t> nodeids;
 	nodeids.reserve(headers.size());
 
-	for (int64_t i = 0; i < headers.size(); ++i)
+	for (int64_t i = 0; i < (int64_t)headers.size(); ++i)
 	{
 		char* stop;
 		const auto last_colon = headers[i].find_last_of(":") + 1;
@@ -209,7 +209,7 @@ void ReportImporter::_ReshapeHeadersFromNodeId(const std::vector<int64_t>& nodei
 	reshape_headerpos.resize(nodeids.size(), -1);
 
 	int64_t count = 0;
-	for (int64_t i = 0; i < headers.size(); ++i)
+	for (int64_t i = 0; i < (int64_t)headers.size(); ++i)
 	{
 		if (headerpos[i] != -1)
 		{
