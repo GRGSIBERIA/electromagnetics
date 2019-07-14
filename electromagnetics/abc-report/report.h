@@ -37,6 +37,8 @@ public:
 	const int64_t nodeid() const { return _nodeid; }
 
 	const int64_t axisid() const { return _axisid; }
+
+	const std::vector<double>& values() const { return _values; }
 };
 
 /**
